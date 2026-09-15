@@ -39,22 +39,20 @@ from the publishable tree.
    it does not change crop/render calculations or fix the 1080p presentation issue.
 
 See [build instructions](docs/BUILD.md) to reconstruct the native output and
-package an AAR. The extracted build route needs a clean native rebuild before
-being declared independently reproducible; this handoff verified the patch
-chain and packaging against retained artifacts, not a new native compile.
+package an AAR. A clean ARM32 build and packaging check completed without native
+source or build-script changes; see [validation scope](docs/VALIDATION.md#clean-native-build-verification).
+The rebuilt verification artifact has separate device-validation requirements
+from the published, previously tested binary.
 
 ## Consuming the build
 
-Recommended first distribution: **versioned GitHub Release assets**, with a pinned
-Gradle artifact-only Ivy repository. No Maven publication is necessary for the
-first JellyScope consumer. See [distribution](docs/DISTRIBUTION.md) for the exact
-Gradle pattern and migration boundaries. `VERSION` is a proposed first bundle
-version, not an already published tag or release.
-
-The app's production dependency remains the provider coordinate until its native
-manifest, notices and dependency are deliberately updated together. The local
-experimental AAR override can continue to use the retained bundle during that
-transition.
+The published **v0.41.0-jellyscope.1 GitHub Release assets** are consumed by
+JellyScope through a pinned, artifact-only Gradle Ivy repository. No Maven
+publication or GitHub authentication is required for the app's dependency fetch.
+See [distribution](docs/DISTRIBUTION.md) for the Gradle pattern and boundaries.
+The app dependency, native manifest, and source/license records have been adopted
+together. A clean-build verification artifact does not replace that release;
+publishing different native bytes requires a new version and separate validation.
 
 See [RELEASE.md](RELEASE.md) for the prepared upload assets and manual GitHub
 release steps. Binary/source release assets remain ignored under `dist/`.

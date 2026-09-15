@@ -39,12 +39,42 @@ It refuses an existing build directory instead of deleting previous source or
 outputs. Retain or move that directory before another fresh build. It builds no
 APK and launches no tests or playback.
 
-This entry point consolidates the original successful commands, including the
-Meson version and explicit shared-library build. It has received shell syntax
-and source/patch verification but **has not completed a fresh native build in
-this extracted repository**. Do not claim byte-reproducible output: system build
-tool packages are not frozen, and native runtime acceptance still belongs to the
-resulting artifact/device pair.
+This entry point completed a fresh ARM32 build and AAR packaging verification on
+2026-09-15 without changes to the build scripts, Dockerfile, or patch series.
+See [validation](VALIDATION.md#clean-native-build-verification) for the exact scope.
+Do not claim byte-reproducible output: system build tool packages are not frozen,
+and native runtime acceptance still belongs to the resulting artifact/device pair.
+
+### macOS Docker storage
+
+Use a Linux Docker volume for the NDK and build workspace. The Linux NDK contains
+case-distinct header names that collide on the usual case-insensitive macOS
+filesystem. Keep the downloaded ZIP on the host and extract it inside Linux.
+The following builds committed source; commit intended source changes first.
+Use a new volume/container name for another fresh build, preserving prior outputs.
+
+```bash
+mkdir -p .local
+git archive --format=tar HEAD --output=.local/native-source.tar
+docker volume create jellyscope-mpv-native-work
+docker run --name jellyscope-mpv-native-build --platform linux/amd64 \
+  --mount type=volume,source=jellyscope-mpv-native-work,target=/work \
+  --mount type=bind,source="$PWD/.local/native-source.tar",target=/source.tar,readonly \
+  --mount type=bind,source=/absolute/path/to/android-ndk-r29-linux.zip,target=/ndk.zip,readonly \
+  jellyscope-mpv-native-build bash -c '
+    set -euo pipefail
+    mkdir /work/bundle /work/toolchain
+    tar -xf /source.tar -C /work/bundle
+    unzip -q /ndk.zip -d /work/toolchain
+    cd /work/bundle
+    bash scripts/build-native.sh /work/toolchain/android-ndk-r29
+  '
+docker cp jellyscope-mpv-native-build:/work/bundle/.local/native .local/native
+```
+
+Use a new local destination for `docker cp` if `.local/native` already exists.
+The build container and volume are retained for inspection; removing a container
+does not remove its named volume.
 
 ## Package the AAR
 

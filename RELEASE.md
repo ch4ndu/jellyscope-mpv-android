@@ -60,6 +60,9 @@ GitHub Packages token setup for developers cloning the app.
 
 These assets preserve the previously exercised native bytes and include pinned
 source and notice materials. Artifact structure, provider-entry preservation and
-the active patch chain were checked locally. The standalone native builder still
-needs a clean native rebuild before being described as independently reproducible.
+the active patch chain were checked locally. The standalone native builder has
+since passed a [clean build and packaging check](docs/VALIDATION.md#clean-native-build-verification).
+That verification output differs from these retained release bytes and does not
+replace them. Do not overwrite an existing release with the rebuilt artifact;
+any future adoption needs a new version and separate runtime validation.
 No app build, installation or device test is part of this packaging handoff.

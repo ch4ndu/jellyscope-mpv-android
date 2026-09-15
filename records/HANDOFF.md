@@ -8,4 +8,10 @@
 - No full native rebuild, Docker build, app build, automated test or device playback was performed for this extraction.
 - No Git initialization, staging, commit, remote creation or publishing was performed. VERSION names a proposed first artifact.
 
-The consolidated build entry point still needs a clean native rebuild before claiming independent reproducibility. Existing manual Cube validation applies to the retained native bytes; it does not establish output from an unexecuted new build. Release source/notice completion and app dependency adoption are separate next steps.
+These bullets describe the original extraction handoff. Release source/notices,
+publication, and JellyScope dependency adoption were subsequently completed.
+The consolidated entry point later passed clean ARM32 compilation and AAR
+packaging without native-source or build-script changes; see
+[the current validation record](../docs/VALIDATION.md#clean-native-build-verification).
+Existing Cube acceptance still applies to the retained published bytes, not to
+the newly compiled verification artifact.
