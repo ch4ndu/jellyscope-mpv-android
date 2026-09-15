@@ -1,0 +1,13 @@
+--- a/libavcodec/mediacodecdec.c
++++ b/libavcodec/mediacodecdec.c
+@@ -434,6 +434,10 @@
+     if (avctx->codec_type == AVMEDIA_TYPE_VIDEO) {
+         ff_AMediaFormat_setInt32(format, "width", avctx->width);
+         ff_AMediaFormat_setInt32(format, "height", avctx->height);
++        if (avctx->codec_id == AV_CODEC_ID_VP9 && avctx->width > 0 && avctx->height > 0) {
++            ff_AMediaFormat_setInt32(format, "max-width", avctx->width);
++            ff_AMediaFormat_setInt32(format, "max-height", avctx->height);
++        }
+     } else {
+         ff_AMediaFormat_setInt32(format, "channel-count", avctx->ch_layout.nb_channels);
+         ff_AMediaFormat_setInt32(format, "sample-rate", avctx->sample_rate);

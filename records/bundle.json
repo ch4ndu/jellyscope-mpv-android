@@ -1,0 +1,20 @@
+{
+  "provider_coordinate": "dev.jdtech.mpv:libmpv:1.0.0",
+  "provider_repository": "https://github.com/jarnedemeulemeester/libmpv-android",
+  "provider_commit": "fcf6745703dc1265bca88f12fee8fc355ddf251e",
+  "mpv_commit": "41f6a645068483470267271e1d09966ca3b9f413",
+  "mpv_version": "0.41.0",
+  "upstream_imagereader_backport": "c8d3f6884dd4c4725bae18f72dcf48163b512ea8",
+  "modified_entries": [
+    "jni/armeabi-v7a/libmpv.so"
+  ],
+  "imagereader_capacity": 2,
+  "crop_diagnostics": true,
+  "ndk": "29.0.14206865",
+  "native_api": 26,
+  "build_host": "linux-x86_64",
+  "meson": "1.6.1",
+  "consumer_role": "native-build-input-only; consumer compiles its own JNI bridge",
+  "other_native_entries": "unchanged from provider; unmodified ABIs are not covered by the ARM32 patch",
+  "ffmpeg_configuration": "provider GPL and version3 enabled; FFmpeg shared libraries retained from base AAR"
+}

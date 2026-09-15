@@ -1,0 +1,7 @@
+Licenses are file- and component-specific. This repository does not relicense mpv or its dependencies.
+
+New JellyScope build/packaging scripts and documentation: MPL-2.0 (licenses/MPL-2.0.txt).
+patches/0001-0003: changes to mpv video/out/hwdec/hwdec_aimagereader.c, LGPL-2.1-or-later; retain its original copyright notice.
+vendor/provider: MIT; see vendor/provider/LICENSE for the original notices.
+experiments/vp9-adaptive-max: changes to FFmpeg libavcodec/mediacodecdec.c; its original source license continues to apply.
+Native artifacts contain a GPL-enabled dependency graph; the patch file's license is not the license of the whole binary. See THIRD_PARTY.md and docs/DISTRIBUTION.md.
