@@ -1,30 +1,31 @@
 # Distribution and JellyScope consumption
 
-## Recommendation
+## Immutable public assets
 
-Start with a public GitHub repository plus **versioned GitHub Releases**. Publish
-an AAR and its source/notice records as release assets. Gradle supports a custom
-artifact-only Ivy layout, so this still gives JellyScope a pinned dependency and
-normal Gradle caching. Do not resolve `latest`, a branch name or a mutable build.
-No remote repository, release or Maven package is configured or published by this
-local handoff.
+The public `jellyscope-mpv-android` repository distributes pinned AAR, complete
+source and notice assets through versioned GitHub Releases. Published `.1`
+remains immutable. `VERSION` prepares `.2`; fresh build, asset binding and
+physical qualification must finish before the separately authorized publication.
+[RELEASE.md](../RELEASE.md) owns those checkpoints and assembly commands.
+Never resolve `latest`, a branch name or mutable native bytes.
 
-For example, a future release tagged `v0.41.0-jellyscope.1` could contain:
+The versioned assets are:
 
-- `libmpv-native-0.41.0-jellyscope.1.aar`
-- the matching modified mpv source archive
-- the complete corresponding-source/build/notice materials for the distributed graph
+- `libmpv-native-0.41.0-jellyscope.2.aar`
+- `libmpv-native-0.41.0-jellyscope.2-sources.tar.gz`
+- `libmpv-native-0.41.0-jellyscope.2-notices.zip`
 
-Keep experimental ARM32-only scope visible in release notes. Do not publish a
-replacement under the upstream provider's coordinate or overwrite old versions.
+The prepared AAR replaces libmpv/libavformat on three ABIs, with ARM32-only
+ImageReader/crop changes. Keep this scope and physical limits in release notes.
+Never publish under the upstream provider's coordinate or overwrite old assets.
 
-## Proposed Gradle wiring
+## Artifact-only Gradle wiring
 
-Replace `OWNER` and the example group with the eventual public repository owner.
-This is an integration example, not an app change already made:
+JellyScope uses an exclusive artifact-only Ivy repository, with the public
+repository owner in `OWNER` below. Pin a version that has actually been
+published; a prepublication local override does not prove public resolution.
 
 ```kotlin
-// In the app's dependencyResolutionManagement.repositories block:
 ivy {
     name = "JellyScopeMpvReleases"
     url = uri("https://github.com/OWNER/jellyscope-mpv-android/releases/download")
@@ -36,54 +37,38 @@ ivy {
 }
 ```
 
-In `:android-libmpv`, replace the single external input to `pinnedMpvAar` with the
-chosen pinned coordinate, for example:
+The native build-input configuration stays nontransitive:
 
 ```kotlin
-add(pinnedMpvAar.name, "io.github.OWNER:libmpv-native:0.41.0-jellyscope.1@aar")
+add(pinnedMpvAar.name, "io.github.OWNER:libmpv-native:0.41.0-jellyscope.2@aar")
 ```
 
-Keep that configuration nontransitive. Keep the app's existing native extraction,
-x86 exclusion and provider `libplayer.so` exclusion. The app must continue to
-compile its own JNI bridge with the typed logging/idempotent teardown changes.
-Do not add this AAR as a parallel runtime `implementation` dependency.
+Keep native extraction, x86 exclusion and upstream `libplayer.so` exclusion.
+The app builds its own JNI bridge; do not add a parallel runtime dependency.
+API25 apps/API26 mpv, three shipped ABIs and existing codec/passthrough policy
+remain consumer-owned. Preserve ordinary AGP stripping when qualifying APKs.
 
-The app currently extracts only `jni/**`; the AAR's `META-INF/jellyscope-mpv/`
-records are not automatically packaged into the APK. During adoption, update the
-app's native manifest, attribution, corresponding-source routes and generated
-license assets together, then run its existing wrapper/native package guards.
-Retain current Android ABI/API and codec capability policy. This handoff changes
-none of those production declarations.
+Only `jni/**` is extracted; AAR `META-INF/jellyscope-mpv/` records are not
+packaged automatically. Adoption updates app native manifests, attribution,
+source tag/real commit/routes, component inventory and generated notice assets
+together. Run the existing wrapper/native guards and ordinary final verification
+using public resolution after publication. Unexplained stripped-native identity
+mismatches block acceptance.
 
-## Maven options
+## Corresponding source and notices
 
-GitHub Packages' Maven registry requires authentication even for public packages.
-That adds token setup to local and external builds, so it is not the recommended
-public download route here. GitHub Actions has its own supported token route.
+Modified mpv files have their own LGPL-2.1-or-later terms, but the native graph
+includes GPL-enabled FFmpeg and other components. The provider's MIT wrapper and
+this repository's tooling license do not replace component obligations; do not
+label the graph LGPL-only. [THIRD_PARTY.md](../THIRD_PARTY.md) owns the inventory.
 
-Maven Central is a reasonable later destination if this becomes a general-purpose
-library for multiple consumers. It needs namespace setup, signing and required
-publication metadata. That work is independent of the native patch itself and
-is unnecessary for a first consumer using a versioned release artifact.
+The complete source asset carries all inherited component/submodule/provider
+inputs, exact per-ABI modified mpv archives, pinned unmodified FFmpeg source,
+controlling recipe/configuration, toolchain instructions, build records and
+component notices. Per-ABI archives match the newly packaged AAR's recorded
+source hashes unchanged. A modified-mpv delta alone and automatic GitHub source
+archives are insufficient. Validate fresh build/source delivery before treating
+new bytes as externally distributable; record checks are engineering evidence.
 
-Sources checked for this recommendation:
-
-- [GitHub Maven authentication](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-apache-maven-registry)
-- [GitHub release asset URLs](https://docs.github.com/en/rest/releases/assets)
-- [Gradle custom repository layouts](https://docs.gradle.org/current/userguide/supported_repository_types.html)
-- [Maven Central publication requirements](https://central.sonatype.org/publish/requirements/)
-
-## Source and license delivery
-
-The active patches modify an LGPL-2.1-or-later mpv source file, but the retained
-native dependency graph includes GPL-enabled FFmpeg and other components. Neither
-the provider's MIT wrapper license nor this repository's tooling license replaces
-those obligations. Retain component notices and exact corresponding-source/build
-materials with the binary release. Do not label the graph LGPL-only.
-
-The ignored retained mpv archive contains the exact modified mpv source for the
-validated binary; it is not by itself the corresponding source for every native
-library in the AAR. Preserve the pinned provider sources, each dependency and its
-submodules or versioned source archives, build scripts/configuration and notices.
-Complete that release source delivery and verify the fresh build before treating
-a new binary as ready for external distribution.
+Public Release assets avoid GitHub Packages authentication for clone builds.
+A Maven registry migration is outside this native adoption scope.

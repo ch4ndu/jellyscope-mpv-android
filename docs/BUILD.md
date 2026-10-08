@@ -11,11 +11,12 @@ submodules follow the pinned parent commits' gitlinks. No second dependency
 checksum allowlist is maintained here.
 
 Toolchain: Linux x86_64, Android NDK r29 (`29.0.14206865`), API 26, Meson 1.6.1.
-The provider enables GPL/version-3 FFmpeg code. Shared dependencies are rebuilt
-for linking, but their outputs are **not substituted into the packaged AAR**.
-The original provider FFmpeg and other native shared libraries stay in the AAR.
-Retained `records/meson-build-options.json` and `armv7-crossfile.txt` describe the
-validated build; their `/work/...` paths are historical container paths.
+The provider enables GPL/version-3 FFmpeg code. The packaged AAR replaces
+`libmpv.so` and `libavformat.so` for the three shipped ABIs. Other shared
+dependencies are rebuilt for linking, but their outputs are not substituted;
+all other provider native entries remain unchanged.
+Retained `records/meson-build-options.json` and `armv7-crossfile.txt` describe the historical
+`.1` ARM32 verification build; their `/work/...` paths are historical container paths.
 
 ## Fresh native build
 
@@ -32,18 +33,25 @@ docker run --rm --platform linux/amd64 \
 ```
 
 On a Linux x86_64 host with the same tools, invoke the script directly instead.
-It creates a fresh `.local/build/`, downloads provider dependencies, checks out
-recorded commits, applies the three mpv patches, and builds ARM32 mpv with the
-provider options. Outputs and modified mpv source go under `.local/native/`.
-It refuses an existing build directory instead of deleting previous source or
-outputs. Retain or move that directory before another fresh build. It builds no
-APK and launches no tests or playback.
+It creates separate fresh `.local/build/<abi>/` trees for armeabi-v7a,
+arm64-v8a and x86_64. Each tree downloads provider dependencies, checks out the
+recorded revisions and submodules, applies its patch series, and compiles mpv
+and FFmpeg with the provider options plus the SPDIF muxer. ARM32 uses
+`patches/series`; ARM64 and x86_64 use `patches/series-common`.
 
-This entry point completed a fresh ARM32 build and AAR packaging verification on
-2026-09-15 without changes to the build scripts, Dockerfile, or patch series.
-See [validation](VALIDATION.md#clean-native-build-verification) for the exact scope.
-Do not claim byte-reproducible output: system build tool packages are not frozen,
-and native runtime acceptance still belongs to the resulting artifact/device pair.
+Outputs under `.local/native/<abi>/` include `libmpv.so`, `libavformat.so`,
+`mpv-modified-source.tar.gz`, `applied-patch-series`, `meson-build-options.json`,
+`crossfile.txt`, `ffmpeg-config.h`, `ffmpeg-config_components.h`,
+`ffmpeg-muxer_list.c` and `ffmpeg-source-revision`. Preserve the builder-produced
+mpv archive unchanged when assembling corresponding source.
+
+Before any work, the script refuses existing build or output directories for
+any shipped ABI. Retain or move previous directories before another fresh run;
+do not combine different runs. It builds no APK and launches no playback/tests.
+The historical ARM32 build is documented in
+[validation](VALIDATION.md#clean-native-build-verification). The prepared `.2`
+completed the maintained fresh three-ABI build on 2026-10-08. System tools are not frozen; do not claim
+byte-reproducible output or runtime acceptance from compilation.
 
 ### macOS Docker storage
 
@@ -79,23 +87,29 @@ does not remove its named volume.
 ## Package the AAR
 
 Supply the original `dev.jdtech.mpv:libmpv:1.0.0` AAR, resolved from the declared
-provider dependency, and the rebuilt ARM32 library:
+provider dependency, and fresh three-ABI output. With `VERSION` prepared as `.2`:
 
 ```bash
 python3 scripts/package-aar.py \
   --base-aar /absolute/path/to/provider-libmpv-1.0.0.aar \
-  --armv7-lib .local/native/libmpv.so \
-  --output dist/libmpv-native-0.41.0-jellyscope.1.aar
+  --native-dir .local/native \
+  --bundle-version 0.41.0-jellyscope.2 \
+  --output dist/releases/v0.41.0-jellyscope.2/libmpv-native-0.41.0-jellyscope.2.aar
 ```
 
-For the local handoff only, the same command can use
-`.local/reference/provider-libmpv-1.0.0.aar` and `.local/reference/libmpv.so`.
-That repackages the already tested binary; it is not a native rebuild.
-The output path must be new. The packager checks unique ZIP entries and ARM32
-ELF identity; input provenance is the caller's responsibility, recorded by the
-pinned provider coordinate. It never substitutes another ABI or FFmpeg library.
+The requested version must equal `VERSION` and must not appear in
+`records/bundle.json`'s `published_versions`. The list retains `.1`; add `.2`
+at the next release preparation, not before packaging `.2`. The output path
+must be new. Published assets must never be overwritten.
 
-The release record also needs the modified mpv source archive, the source/build
-records for the rest of the distributed native graph, patch series and notices.
-The automatic repository source ZIP alone omits ignored native/dependency
-sources. See [distribution](DISTRIBUTION.md).
+The packager checks all ABI outputs before creating the AAR: ELF identity,
+applied patch series, pinned FFmpeg revision, configure order, enabled SPDIF
+muxer, registration and unstripped symbol evidence. It records source/config
+hashes in `META-INF/jellyscope-mpv/bundle.json`. It replaces exactly the three
+`libmpv.so` and three `libavformat.so` entries. Separately confirm the expected
+44 retained entries byte-for-byte and validate imports against the retained
+provider libraries plus API-26 stubs, rather than newly rebuilt sibling libraries.
+
+The complete source/notice asset gate is in [RELEASE.md](../RELEASE.md).
+Automatic GitHub source ZIPs omit ignored component sources and do not replace
+that delivery. New native bytes require separate artifact/device acceptance.

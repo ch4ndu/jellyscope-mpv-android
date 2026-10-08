@@ -32,6 +32,13 @@ Patch 0001 backports upstream commit c8d3f6884dd4c4725bae18f72dcf48163b512ea8.
 Patch 0002 lowers the image limit further; patch 0003 adds bounded observations.
 Keep the original file header when applying or distributing these modifications.
 
+Patch 0004 modifies mpv `audio/out/ao_audiotrack.c`, whose header credits
+Copyright (C) 2018 Aman Gupta and Copyright (C) 2012-2015 VLC authors,
+VideoLAN and VideoLabs, with Thomas Guillem and Ming Hu as authors. That file
+is LGPL-2.1-or-later; preserve its original header. The active FFmpeg recipe
+change enables the SPDIF muxer without modifying the pinned FFmpeg source.
+GPL/version-3 FFmpeg configuration remains enabled; this graph is not LGPL-only.
+
 The archived FFmpeg patch modifies `libavcodec/mediacodecdec.c`, whose header
 credits Copyright (c) 2015-2016 Matthieu Bouron and licenses that file
 LGPL-2.1-or-later. It is not part of the active native output.

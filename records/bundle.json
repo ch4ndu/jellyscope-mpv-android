@@ -4,17 +4,47 @@
   "provider_commit": "fcf6745703dc1265bca88f12fee8fc355ddf251e",
   "mpv_commit": "41f6a645068483470267271e1d09966ca3b9f413",
   "mpv_version": "0.41.0",
+  "ffmpeg_commit": "9047fa1b084f76b1b4d065af2d743df1b40dfb56",
+  "ffmpeg_version": "8.1",
   "upstream_imagereader_backport": "c8d3f6884dd4c4725bae18f72dcf48163b512ea8",
-  "modified_entries": [
-    "jni/armeabi-v7a/libmpv.so"
+  "published_versions": [
+    "0.41.0-jellyscope.1"
   ],
-  "imagereader_capacity": 2,
-  "crop_diagnostics": true,
+  "modified_entries": [
+    "jni/arm64-v8a/libavformat.so",
+    "jni/arm64-v8a/libmpv.so",
+    "jni/armeabi-v7a/libavformat.so",
+    "jni/armeabi-v7a/libmpv.so",
+    "jni/x86_64/libavformat.so",
+    "jni/x86_64/libmpv.so"
+  ],
+  "abis": {
+    "arm64-v8a": {
+      "applied_patch_series": "patches/series-common",
+      "encoded_audio_carrier_rate_preserved": true,
+      "spdif_muxer_enabled": true
+    },
+    "armeabi-v7a": {
+      "applied_patch_series": "patches/series",
+      "encoded_audio_carrier_rate_preserved": true,
+      "spdif_muxer_enabled": true,
+      "imagereader_capacity": 2,
+      "crop_diagnostics": true
+    },
+    "x86_64": {
+      "applied_patch_series": "patches/series-common",
+      "encoded_audio_carrier_rate_preserved": true,
+      "spdif_muxer_enabled": true
+    }
+  },
+  "physical_qualification": "pending for these libraries when this source was prepared; results are recorded with the release evidence. Earlier Cube acceptance covers only the published 0.41.0-jellyscope.1 ARM32 bytes",
   "ndk": "29.0.14206865",
   "native_api": 26,
   "build_host": "linux-x86_64",
   "meson": "1.6.1",
   "consumer_role": "native-build-input-only; consumer compiles its own JNI bridge",
-  "other_native_entries": "unchanged from provider; unmodified ABIs are not covered by the ARM32 patch",
-  "ffmpeg_configuration": "provider GPL and version3 enabled; FFmpeg shared libraries retained from base AAR"
+  "other_native_entries": "byte-identical to the provider; only the six listed libmpv.so/libavformat.so entries are replaced. Other FFmpeg libraries, jni/x86/libavformat.so and all other x86 entries remain provider bytes; consuming apps exclude x86. The replaced libraries must resolve DT_NEEDED and imports against this retained provider graph",
+  "ffmpeg_configuration": "unmodified pinned FFmpeg source; provider options with GPL and version3 enabled, plus --enable-muxer=spdif after --disable-muxers as the only option delta (vendor/provider/buildscripts/scripts/ffmpeg.sh). No encoder, device or filter is enabled. Other FFmpeg libraries are retained from the base AAR",
+  "build_provenance": "0.41.0-jellyscope.2 is prepared for one fresh scripts/build-native.sh run covering armeabi-v7a, arm64-v8a and x86_64 in new per-ABI build and output directories; libmpv.so and libavformat.so both come from that run and no earlier candidate output is reused. When this source was prepared, that build, the focused native checks and device checks were pending; their results are recorded with the release evidence, not here. No byte-reproducibility claim is made",
+  "corresponding_source": "per-ABI mpv-modified-source.tar.gz produced by the same fresh build and carried unchanged into the separate source offer, matching the per-ABI modified_source_sha256 in the packaged bundle.json; scripts/package-aar.py records there every hashed build output (libraries, modified mpv source and FFmpeg configuration/registration records) from that build. FFmpeg is the recorded unmodified commit plus the packaged controlling build scripts, with one unmodified FFmpeg source archive in the source offer rather than per ABI; per-ABI patch series, crossfile, Meson options and FFmpeg source revision accompany each ABI there"
 }

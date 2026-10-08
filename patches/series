@@ -1,3 +1,4 @@
 0001-upstream-imagereader-three.patch
 0002-cube-imagereader-two.patch
 0003-imagereader-crop-diagnostics.patch
+0004-audiotrack-preserve-encoded-carrier-rate.patch

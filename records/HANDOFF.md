@@ -15,3 +15,11 @@ packaging without native-source or build-script changes; see
 [the current validation record](../docs/VALIDATION.md#clean-native-build-verification).
 Existing Cube acceptance still applies to the retained published bytes, not to
 the newly compiled verification artifact.
+
+
+`VERSION` now prepares `.2`; the original extraction checks above remain
+historical `.1` evidence. Fresh three-ABI build, six-library packaging and static compatibility checks
+have passed. Complete committed-source/notice binding and physical
+qualification remain pending as described in
+[validation](../docs/VALIDATION.md#prepared-three-abi-audio-bundle). No historical
+success establishes acceptance of the newly prepared output.

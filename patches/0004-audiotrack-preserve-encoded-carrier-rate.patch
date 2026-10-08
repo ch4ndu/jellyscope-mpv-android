@@ -1,0 +1,14 @@
+--- a/audio/out/ao_audiotrack.c
++++ b/audio/out/ao_audiotrack.c
+@@ -673,7 +673,10 @@
+         p->format = AudioFormat.ENCODING_PCM_16BIT;
+     }
+
+-    if (AudioTrack.getNativeOutputSampleRate) {
++    // The native mixer rate caps PCM only. An IEC61937 carrier must keep its
++    // packetized rate (192 kHz for E-AC3); capping it makes player/audio.c
++    // reject passthrough as a changed format and fall back to PCM.
++    if (!af_fmt_is_spdif(ao->format) && AudioTrack.getNativeOutputSampleRate) {
+         jint samplerate = MP_JNI_CALL_STATIC_INT(
+             AudioTrack.clazz,
+             AudioTrack.getNativeOutputSampleRate,

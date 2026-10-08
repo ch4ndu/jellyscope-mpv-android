@@ -16,8 +16,8 @@ MediaCodec output selection belongs to the app, not this repository's patch set.
 8K hardware support. JellyScope's recovery dialog is an app-side feature and is
 not in the native AAR. Minor resume drops were deferred by the owner.
 
-Only the ARM32 libmpv is patched. ARM64/x86_64 payloads are unchanged provider
-binaries. Generalizing the two-image adjustment or claiming another platform
+In published `.1`, only ARM32 libmpv is patched. Its ARM64/x86_64 payloads
+are unchanged provider binaries. Generalizing the two-image adjustment or claiming another platform
 validated needs a separate native build and owner-controlled playback checks.
 
 ## Repository extraction verification
@@ -57,3 +57,26 @@ verification artifact; the published release and app dependency were not replace
 This establishes that the native build completes from clean source, not byte-for-
 byte reproducibility or runtime acceptance of the rebuilt binary. No new tests,
 playback harness, APK installation, or device playback were performed.
+
+## Prepared three-ABI audio bundle
+
+`0.41.0-jellyscope.2` prepares the common AudioTrack carrier patch and FFmpeg
+SPDIF muxer for three ABIs, preserving ARM32 ImageReader/crop scope. On 2026-10-08, its maintained
+fresh three-ABI build completed in about 46 minutes. The Linux build environment
+required isolated export/import recovery. GNOME Git returned HTTP 503 for
+libxml2; a read-only existing Git cache supplied the exact pinned commit for
+fresh checkouts, with no compiled-output reuse or recipe change.
+
+Static checks found no unresolved strong imports against the retained provider
+libraries plus API-26 stubs, preserved provider exports and DT_NEEDED, and
+verified the enabled/registered SPDIF muxer. Packaging replaced exactly six
+entries and preserved the other 44 byte-for-byte. Per-ABI modified-source and
+FFmpeg configuration records match the generated AAR hashes unchanged.
+Complete committed-source/notice asset binding, publication and Shield/TiVo
+qualification remain pending. Earlier Cube acceptance and the
+local audio candidate's TiVo results do not qualify these new libraries.
+
+The historical `records/meson-build-options.json` and `armv7-crossfile.txt`
+remain `.1` ARM32 evidence. New records accompany each ABI in the `.2` source
+asset. Host structure/import checks do not establish Android loader behavior,
+receiver format, loudness, surround delivery, or physical Cube/x86 acceptance.
