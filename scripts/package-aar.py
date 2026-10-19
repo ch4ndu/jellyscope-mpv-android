@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: MPL-2.0
-"""Replace libmpv and libavformat for every shipped ABI in an explicitly supplied provider 1.0.0 AAR."""
+"""Replace libmpv and the complete FFmpeg library set for every shipped ABI in an explicitly supplied provider 1.0.0 AAR."""
 import argparse
 import hashlib
 import json
@@ -13,11 +13,10 @@ ELF_IDENTITY = {
     'arm64-v8a': (2, 183),
     'x86_64': (2, 62),
 }
-LIBRARIES = ['libmpv.so', 'libavformat.so']
+LIBRARIES = ['libmpv.so', 'libavcodec.so', 'libavdevice.so', 'libavfilter.so', 'libavformat.so', 'libavutil.so', 'libswresample.so', 'libswscale.so']
 # Build output -> per-ABI bundle.json hash key.
 HASHED_OUTPUTS = {
-    'libmpv.so': 'libmpv_sha256',
-    'libavformat.so': 'libavformat_sha256',
+    **{name: name.removesuffix('.so') + '_sha256' for name in LIBRARIES},
     'mpv-modified-source.tar.gz': 'modified_source_sha256',
     'ffmpeg-config.h': 'ffmpeg_config_sha256',
     'ffmpeg-config_components.h': 'ffmpeg_config_components_sha256',
@@ -62,7 +61,7 @@ metadata['bundle_version'] = args.bundle_version
 if set(metadata['abis']) != set(ELF_IDENTITY):
     parser.error('records/bundle.json must describe exactly the shipped ABIs')
 if sorted(metadata['modified_entries']) != sorted(f'jni/{abi}/{name}' for abi in ELF_IDENTITY for name in LIBRARIES):
-    parser.error('records/bundle.json modified_entries must list exactly libmpv.so and libavformat.so per shipped ABI')
+    parser.error('records/bundle.json modified_entries must list the complete libmpv/FFmpeg set per shipped ABI')
 revisions = dict(line.split() for line in (root / 'records/source-revisions.txt').read_text().splitlines() if line.strip())
 
 # Validate every ABI result before reading the base or creating output.
@@ -119,7 +118,7 @@ with ZipFile(args.base_aar) as source:
     if len(set(names)) != len(names):
         parser.error('Provider input must have unique entries')
     if any(names.count(entry) != 1 for entry in libraries):
-        parser.error('Provider input must contain one libmpv.so and one libavformat.so per shipped ABI')
+        parser.error('Provider input must contain one of every required libmpv/FFmpeg library per shipped ABI')
     if any(name.startswith(METADATA_PREFIX) for name in names):
         parser.error('Input is already a JellyScope bundle; supply the original provider AAR')
     if len(set(added)) != len(added) or set(added) & set(names):

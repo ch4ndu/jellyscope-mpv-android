@@ -12,9 +12,9 @@ checksum allowlist is maintained here.
 
 Toolchain: Linux x86_64, Android NDK r29 (`29.0.14206865`), API 26, Meson 1.6.1.
 The provider enables GPL/version-3 FFmpeg code. The packaged AAR replaces
-`libmpv.so` and `libavformat.so` for the three shipped ABIs. Other shared
-dependencies are rebuilt for linking, but their outputs are not substituted;
-all other provider native entries remain unchanged.
+`libmpv.so` and all seven FFmpeg shared libraries for the three shipped ABIs.
+FFmpeg is pinned to 8.1.3. Other dependencies are rebuilt for linking but their
+outputs are not substituted; the remaining provider entries stay unchanged.
 Retained `records/meson-build-options.json` and `armv7-crossfile.txt` describe the historical
 `.1` ARM32 verification build; their `/work/...` paths are historical container paths.
 
@@ -39,7 +39,8 @@ recorded revisions and submodules, applies its patch series, and compiles mpv
 and FFmpeg with the provider options plus the SPDIF muxer. ARM32 uses
 `patches/series`; ARM64 and x86_64 use `patches/series-common`.
 
-Outputs under `.local/native/<abi>/` include `libmpv.so`, `libavformat.so`,
+Outputs under `.local/native/<abi>/` include `libmpv.so`, all seven FFmpeg
+shared libraries,
 `mpv-modified-source.tar.gz`, `applied-patch-series`, `meson-build-options.json`,
 `crossfile.txt`, `ffmpeg-config.h`, `ffmpeg-config_components.h`,
 `ffmpeg-muxer_list.c` and `ffmpeg-source-revision`. Preserve the builder-produced
@@ -58,7 +59,9 @@ byte-reproducible output or runtime acceptance from compilation.
 Use a Linux Docker volume for the NDK and build workspace. The Linux NDK contains
 case-distinct header names that collide on the usual case-insensitive macOS
 filesystem. Keep the downloaded ZIP on the host and extract it inside Linux.
-The following builds committed source; commit intended source changes first.
+The example below builds committed source. A local qualification build may use
+an explicitly inventoried worktree snapshot; binding distributable source to an
+authorized commit remains a later release gate.
 Use a new volume/container name for another fresh build, preserving prior outputs.
 
 ```bash
@@ -87,27 +90,25 @@ does not remove its named volume.
 ## Package the AAR
 
 Supply the original `dev.jdtech.mpv:libmpv:1.0.0` AAR, resolved from the declared
-provider dependency, and fresh three-ABI output. With `VERSION` prepared as `.2`:
+provider dependency, and fresh three-ABI output. With `VERSION` prepared as `.3`:
 
 ```bash
 python3 scripts/package-aar.py \
   --base-aar /absolute/path/to/provider-libmpv-1.0.0.aar \
   --native-dir .local/native \
-  --bundle-version 0.41.0-jellyscope.2 \
-  --output dist/releases/v0.41.0-jellyscope.2/libmpv-native-0.41.0-jellyscope.2.aar
+  --bundle-version 0.41.0-jellyscope.3 \
+  --output dist/releases/v0.41.0-jellyscope.3/libmpv-native-0.41.0-jellyscope.3.aar
 ```
 
 The requested version must equal `VERSION` and must not appear in
-`records/bundle.json`'s `published_versions`. The list retains `.1`; add `.2`
-at the next release preparation, not before packaging `.2`. The output path
+`records/bundle.json`'s `published_versions`. The list retains `.1` and `.2`; add `.3` only when preparing its successor. The output path
 must be new. Published assets must never be overwritten.
 
 The packager checks all ABI outputs before creating the AAR: ELF identity,
 applied patch series, pinned FFmpeg revision, configure order, enabled SPDIF
 muxer, registration and unstripped symbol evidence. It records source/config
-hashes in `META-INF/jellyscope-mpv/bundle.json`. It replaces exactly the three
-`libmpv.so` and three `libavformat.so` entries. Separately confirm the expected
-44 retained entries byte-for-byte and validate imports against the retained
+hashes in `META-INF/jellyscope-mpv/bundle.json`. It replaces exactly 24 entries: libmpv and the complete FFmpeg set on each ABI.
+Separately confirm the expected 26 retained entries byte-for-byte and validate imports against the retained
 provider libraries plus API-26 stubs, rather than newly rebuilt sibling libraries.
 
 The complete source/notice asset gate is in [RELEASE.md](../RELEASE.md).

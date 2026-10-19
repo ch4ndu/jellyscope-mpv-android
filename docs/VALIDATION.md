@@ -80,3 +80,32 @@ The historical `records/meson-build-options.json` and `armv7-crossfile.txt`
 remain `.1` ARM32 evidence. New records accompany each ABI in the `.2` source
 asset. Host structure/import checks do not establish Android loader behavior,
 receiver format, loudness, surround delivery, or physical Cube/x86 acceptance.
+
+## FFmpeg 8.1.3 candidate (.3)
+
+On 2026-10-19, a fresh maintained build completed for armeabi-v7a, arm64-v8a
+and x86_64 using Linux x86_64, NDK r29, API 26 and Meson 1.6.1. The builder
+replaces all seven FFmpeg 8.1.3 shared libraries and patched mpv 0.41.0 together.
+A saved build environment required flattening/import to recover missing Docker
+snapshot parents. The pinned libxml2 Git cache and NDK were mounted read-only;
+no earlier native binaries or build outputs were reused.
+
+Static checks pass for ELF architecture, 16 KB load alignment, strong imports
+against the complete packaged graph plus API-26 stubs, preserved provider
+exports and DT_NEEDED, and SPDIF muxer registration. The AAR replaces exactly
+24 provider entries and preserves 26 byte-for-byte. Per-ABI library, modified
+source and FFmpeg configuration hashes match the AAR records. Source inspection
+confirms encoded AudioTrack carrier preservation on every ABI and ImageReader
+capacity two on ARM32. No byte-reproducibility claim follows from these checks.
+
+The isolated JellyScope candidate passes its full verification gate: 1,785
+existing tests with no failures/errors/skips and both minified release APKs.
+All 24 replacement native entries per APK are exact recorded strip-equivalent
+bytes, LibVLC 3.7.7 is retained on every shipped ABI, and the font-cache JNI call
+is present after minification. Package checks preserve API 25 installation,
+x86 exclusion, the selected C++ runtime and 16 KB ZIP/64-bit ELF alignment.
+These results use a local resolver and an uncommitted app candidate; final
+committed-source/public asset binding remains pending. Earlier .1/.2 physical
+results qualify only those bytes.
+Cold/warm playback, E-AC-3 passthrough/PCM routes, seek, pause/resume, subtitles
+and mpv/VLC coexistence require separately authorized physical checks.

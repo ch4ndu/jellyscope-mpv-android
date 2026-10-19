@@ -3,19 +3,19 @@
 ## Immutable public assets
 
 The public `jellyscope-mpv-android` repository distributes pinned AAR, complete
-source and notice assets through versioned GitHub Releases. Published `.1`
-remains immutable. `VERSION` prepares `.2`; fresh build, asset binding and
+source and notice assets through versioned GitHub Releases. Published `.1` and `.2`
+remain immutable. `VERSION` prepares `.3`; fresh build, asset binding and
 physical qualification must finish before the separately authorized publication.
 [RELEASE.md](../RELEASE.md) owns those checkpoints and assembly commands.
 Never resolve `latest`, a branch name or mutable native bytes.
 
 The versioned assets are:
 
-- `libmpv-native-0.41.0-jellyscope.2.aar`
-- `libmpv-native-0.41.0-jellyscope.2-sources.tar.gz`
-- `libmpv-native-0.41.0-jellyscope.2-notices.zip`
+- `libmpv-native-0.41.0-jellyscope.3.aar`
+- `libmpv-native-0.41.0-jellyscope.3-sources.tar.gz`
+- `libmpv-native-0.41.0-jellyscope.3-notices.zip`
 
-The prepared AAR replaces libmpv/libavformat on three ABIs, with ARM32-only
+The prepared AAR replaces libmpv and all FFmpeg libraries on three ABIs, with ARM32-only
 ImageReader/crop changes. Keep this scope and physical limits in release notes.
 Never publish under the upstream provider's coordinate or overwrite old assets.
 
@@ -40,7 +40,7 @@ ivy {
 The native build-input configuration stays nontransitive:
 
 ```kotlin
-add(pinnedMpvAar.name, "io.github.OWNER:libmpv-native:0.41.0-jellyscope.2@aar")
+add(pinnedMpvAar.name, "io.github.OWNER:libmpv-native:0.41.0-jellyscope.3@aar")
 ```
 
 Keep native extraction, x86 exclusion and upstream `libplayer.so` exclusion.

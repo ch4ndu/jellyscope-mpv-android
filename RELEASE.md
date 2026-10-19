@@ -1,37 +1,37 @@
 # Prepare and publish the native bundle
 
-Prepared version: `0.41.0-jellyscope.2`
-Proposed tag: `v0.41.0-jellyscope.2`
-Proposed title: `mpv 0.41.0 - JellyScope native bundle 2`
+Prepared version: `0.41.0-jellyscope.3`
+Proposed tag: `v0.41.0-jellyscope.3`
+Proposed title: `mpv 0.41.0 - JellyScope native bundle 3`
 
-The `.1` release stays immutable. The `.2` fresh build and static/package
-checks have passed. Complete source binding, remaining physical qualification
-and publication are pending; these instructions do not establish release
-readiness or authorize Git/publication actions.
+The `.1` and `.2` releases stay immutable. The `.3` candidate updates FFmpeg
+8.1 to 8.1.3 and preserves the existing mpv patches. Build, package, complete
+source binding, physical qualification and publication are separate gates;
+these instructions authorize no Git or publication action.
 
 ## Assets and source binding
 
 Prepare new ignored paths; never overwrite an existing asset:
 
 ```text
-dist/releases/v0.41.0-jellyscope.2/
-  libmpv-native-0.41.0-jellyscope.2.aar
-  libmpv-native-0.41.0-jellyscope.2-sources.tar.gz
-  libmpv-native-0.41.0-jellyscope.2-notices.zip
+dist/releases/v0.41.0-jellyscope.3/
+  libmpv-native-0.41.0-jellyscope.3.aar
+  libmpv-native-0.41.0-jellyscope.3-sources.tar.gz
+  libmpv-native-0.41.0-jellyscope.3-notices.zip
   RELEASE-NOTES.md
 ```
 
-Build and package using [BUILD.md](docs/BUILD.md). The AAR replaces six entries;
-verify the 44 retained provider entries and imports against that retained graph.
+Build and package using [BUILD.md](docs/BUILD.md). The AAR replaces 24 entries;
+verify the 26 retained provider entries and imports against that retained graph.
 Describe common AudioTrack/SPDIF changes and ARM32-only ImageReader/crop patches
 in release notes, with actual build/device evidence and remaining limits.
 
-Inspect the `.1` complete source asset's member paths and links before extracting
-into fresh staging with `tar -xzf <.1-sources.tar.gz> -C <fresh-staging>`. Rename
-the root to `libmpv-native-0.41.0-jellyscope.2-sources`. Preserve the complete
-`upstream/` component/submodule/provider source archive set, including pinned
-FFmpeg and upstream mpv; verify the component inventory and revisions rather
-than assuming historical counts. Keep toolchain source/instructions and notices.
+Inspect the `.2` complete source asset's member paths and links before extracting
+into fresh staging with `tar -xzf <.2-sources.tar.gz> -C <fresh-staging>`. Rename
+the root to `libmpv-native-0.41.0-jellyscope.3-sources`. Preserve the unchanged
+`upstream/` component/submodule/provider sources, replace the FFmpeg archive with
+unmodified commit `1041abdc962f4cc4f394aa8de9dc5236c0c3b9e7`, and update its
+source index and notices from that source. Verify all component revisions. Keep toolchain source/instructions and notices.
 Move obsolete ARM32-only modified-source/config records under `historical-v1/`
 or remove them from current-build scope.
 
@@ -55,16 +55,16 @@ repository/tree identity before sealing. Only the outer archive is manually
 created:
 
 ```bash
-tar -czf <new-.2-sources.tar.gz> -C <staging-parent> <.2-source-root>
-tar -tzf <new-.2-sources.tar.gz>
+tar -czf <new-.3-sources.tar.gz> -C <staging-parent> <.3-source-root>
+tar -tzf <new-.3-sources.tar.gz>
 ```
 
 Assemble a fresh notice root from license texts and complete original
-component/provider notices, updating `.2` scope. From its parent:
+component/provider notices, updating `.3` scope. From its parent:
 
 ```bash
-zip -r <absolute-new-.2-notices.zip> <notice-root>
-unzip -Z1 <absolute-new-.2-notices.zip>
+zip -r <absolute-new-.3-notices.zip> <notice-root>
+unzip -Z1 <absolute-new-.3-notices.zip>
 ```
 
 Compare inventories to the component/source record. Missing source, unsafe
@@ -88,9 +88,9 @@ generated binaries from source/notice delivery.
 3. Present the actual commit/tag, three complete asset inventories, release
    notes and qualification for separate push/publication authorization. Push
    that commit/tag and create its immutable pre-release only when authorized.
-   Leave the stable/latest designation off; never replace `.1` assets or tag.
+   Leave the stable/latest designation off; never replace `.1`/`.2` assets or tags.
 4. Confirm anonymous AAR/source/notice access and ordinary app resolution of
-   `.2` without local init overrides. Verify ordinary stripped APK/native
+   `.3` without local init overrides. Verify ordinary stripped APK/native
    identity, the final app matrix, and bounded original-asset device smoke.
    Publication alone does not prove ordinary clone/release behavior.
 

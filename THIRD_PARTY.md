@@ -10,7 +10,7 @@ This inventory is not a claim that the complete graph is permissively licensed.
 | Component | Version | License | Corresponding source |
 | --- | --- | --- | --- |
 | mpv | 0.41.0 | GPL-2.0-or-later | https://github.com/mpv-player/mpv/tree/v0.41.0 |
-| FFmpeg | 8.1 | LGPL-2.1-or-later; GPL-3.0-or-later code enabled | https://github.com/FFmpeg/FFmpeg/tree/n8.1 |
+| FFmpeg | 8.1.3 | LGPL-2.1-or-later; GPL-3.0-or-later code enabled | https://github.com/FFmpeg/FFmpeg/tree/n8.1.3 |
 | dav1d | 1.5.3 | BSD-2-Clause | https://code.videolan.org/videolan/dav1d/-/tree/1.5.3 |
 | libplacebo | 7.360.1 | LGPL-2.1-or-later | https://github.com/haasn/libplacebo/tree/v7.360.1 |
 | libass | 0.17.4 | ISC | https://github.com/libass/libass/tree/0.17.4 |

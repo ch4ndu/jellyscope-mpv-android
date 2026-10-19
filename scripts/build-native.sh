@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MPL-2.0
 set -euo pipefail
 
-# Builds libmpv and libavformat for every shipped ABI; never builds an APK or runs playback/tests.
+# Builds libmpv and all FFmpeg shared libraries for every shipped ABI; never builds an APK or runs playback/tests.
 root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)"
 ndk_dir="${1:?Usage: build-native.sh /absolute/path/to/android-ndk-r29}"
 [[ "$ndk_dir" = /* ]] || { echo 'NDK path must be absolute' >&2; exit 1; }
@@ -66,7 +66,9 @@ for abi in "${abis[@]}"; do
     out="$root/.local/native/$abi"
     mkdir -p "$out"
     cp "$mpv_build/libmpv.so" "$out/libmpv.so"
-    cp "prefix/$abi/lib/libavformat.so" "$out/libavformat.so"
+    for library in libavcodec libavdevice libavfilter libavformat libavutil libswresample libswscale; do
+        cp "prefix/$abi/lib/$library.so" "$out/$library.so"
+    done
     cp "$mpv_build/meson-info/intro-buildoptions.json" "$out/meson-build-options.json"
     cp "prefix/$abi/crossfile.txt" "$out/crossfile.txt"
     cp "$series" "$out/applied-patch-series"
@@ -77,4 +79,4 @@ for abi in "${abis[@]}"; do
     cp "$ffmpeg_build/libavformat/muxer_list.c" "$out/ffmpeg-muxer_list.c"
     git -C deps/ffmpeg rev-parse HEAD > "$out/ffmpeg-source-revision"
 done
-printf '%s\n' 'Native output retained under .local/native/<abi>; package only the three libmpv.so and three libavformat.so files over the pinned provider AAR.'
+printf '%s\n' 'Native output retained under .local/native/<abi>; package the complete libmpv/FFmpeg set for each shipped ABI over the pinned provider AAR.'
